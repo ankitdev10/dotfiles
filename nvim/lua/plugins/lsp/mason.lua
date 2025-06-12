@@ -37,6 +37,7 @@ return {
 				"emmet_ls",
 				"prismals",
 				"pyright",
+				"ruff_lsp",
 			},
 		})
 
@@ -45,6 +46,7 @@ return {
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
 				"eslint_d",
+				"ruff",
 			},
 		})
 	end,
