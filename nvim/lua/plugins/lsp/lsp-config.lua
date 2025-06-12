@@ -104,6 +104,42 @@ return {
 					capabilities = capabilities,
 				})
 			end,
+			["pyright"] = function()
+				local function organize_python_imports()
+					local filename = vim.api.nvim_buf_get_name(0)
+					if filename and filename ~= "" then
+						local result = vim.fn.system("ruff check --fix " .. vim.fn.shellescape(filename))
+						vim.cmd("edit!")
+						if vim.v.shell_error == 0 then
+							vim.notify("Fixed all auto-fixable issues with Ruff", vim.log.levels.INFO)
+						else
+							vim.notify("Ruff fix failed: " .. result, vim.log.levels.ERROR)
+						end
+					else
+						vim.notify("No file to fix", vim.log.levels.WARN)
+					end
+				end
+
+				lspconfig["pyright"].setup({
+					capabilities = capabilities,
+					commands = {
+						OrganizeImports = {
+							organize_python_imports,
+							description = "Fix all auto-fixable issues with Ruff",
+						},
+					},
+					settings = {
+						python = {
+							analysis = {
+								autoSearchPaths = true,
+								diagnosticMode = "workspace",
+								useLibraryCodeForTypes = true,
+								autoImportCompletions = true,
+							},
+						},
+					},
+				})
+			end,
 			["svelte"] = function()
 				-- configure svelte server
 				lspconfig["svelte"].setup({
