@@ -3,7 +3,6 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local conform = require("conform")
-
 		conform.setup({
 			formatters_by_ft = {
 				javascript = { "prettier" },
@@ -19,7 +18,14 @@ return {
 				graphql = { "prettier" },
 				liquid = { "prettier" },
 				lua = { "stylua" },
-				python = { "isort", "black" },
+				python = { "ruff_format" },
+			},
+			formatters = {
+				ruff_format = {
+					command = vim.fn.stdpath("data") .. "/mason/bin/ruff",
+					args = { "format", "--stdin-filename", "$FILENAME", "-" },
+					stdin = true,
+				},
 			},
 			format_on_save = {
 				lsp_fallback = true,
@@ -27,7 +33,6 @@ return {
 				timeout_ms = 1000,
 			},
 		})
-
 		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
 			conform.format({
 				lsp_fallback = true,
