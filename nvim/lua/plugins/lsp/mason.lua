@@ -37,8 +37,9 @@ return {
 				"emmet_ls",
 				"prismals",
 				"pyright",
-				"ruff_lsp",
+				"ruff",
 			},
+			automatic_enable = true,
 		})
 
 		mason_tool_installer.setup({
@@ -46,7 +47,7 @@ return {
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
 				"eslint_d",
-				"ruff",
+				-- "ruff",
 			},
 		})
 	end,
