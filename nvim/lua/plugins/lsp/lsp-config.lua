@@ -5,14 +5,12 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
+		"williamboman/mason.nvim",
 	},
 
 	config = function()
 		-- import lspconfig plugin
 		local lspconfig = require("lspconfig")
-
-		-- import mason_lspconfig plugin
-		local mason_lspconfig = require("mason-lspconfig")
 
 		-- import cmp-nvim-lsp plugin
 		local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -82,11 +80,24 @@ return {
 
 		-- Change the Diagnostic symbols in the sign column (gutter)
 		-- (not in youtube nvim video)
-		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
+		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
 		for type, icon in pairs(signs) do
 			local hl = "DiagnosticSign" .. type
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
+		vim.diagnostic.config({
+			virtual_text = {
+				spacing = 2,
+				prefix = "●",
+				format = function(diagnostic)
+					return string.format("%s (%s)", diagnostic.message, diagnostic.source)
+				end,
+			},
+			signs = true,
+			underline = true,
+			update_in_insert = false,
+			severity_sort = true,
+		})
 
 		local function organize_imports()
 			local params = {
@@ -97,91 +108,99 @@ return {
 			vim.lsp.buf.execute_command(params)
 		end
 
-		mason_lspconfig.setup_handlers({
-			-- default handler for installed servers
-			function(server_name)
-				lspconfig[server_name].setup({
-					capabilities = capabilities,
-				})
-			end,
-			["pyright"] = function()
-				local function organize_python_imports()
-					local filename = vim.api.nvim_buf_get_name(0)
-					if filename and filename ~= "" then
-						local result = vim.fn.system("ruff check --fix " .. vim.fn.shellescape(filename))
-						vim.cmd("edit!")
-						if vim.v.shell_error == 0 then
-							vim.notify("Fixed all auto-fixable issues with Ruff", vim.log.levels.INFO)
-						else
-							vim.notify("Ruff fix failed: " .. result, vim.log.levels.ERROR)
-						end
-					else
-						vim.notify("No file to fix", vim.log.levels.WARN)
-					end
+		local function organize_python_imports()
+			local filename = vim.api.nvim_buf_get_name(0)
+			if filename and filename ~= "" then
+				local result = vim.fn.system("ruff check --fix " .. vim.fn.shellescape(filename))
+				vim.cmd("edit!")
+				if vim.v.shell_error == 0 then
+					vim.notify("Fixed all auto-fixable issues with Ruff", vim.log.levels.INFO)
+				else
+					vim.notify("Ruff fix failed: " .. result, vim.log.levels.ERROR)
 				end
+			else
+				vim.notify("No file to fix", vim.log.levels.WARN)
+			end
+		end
 
-				lspconfig["pyright"].setup({
-					capabilities = capabilities,
-					commands = {
-						OrganizeImports = {
-							organize_python_imports,
-							description = "Fix all auto-fixable issues with Ruff",
-						},
+		-- Create global OrganizeImports command
+		vim.api.nvim_create_user_command("OrganizeImports", function()
+			local filetype = vim.bo.filetype
+			if filetype == "python" then
+				organize_python_imports()
+			elseif
+				filetype == "typescript"
+				or filetype == "typescriptreact"
+				or filetype == "javascript"
+				or filetype == "javascriptreact"
+			then
+				organize_imports()
+			else
+				vim.notify("OrganizeImports not supported for filetype: " .. filetype, vim.log.levels.WARN)
+			end
+		end, { desc = "Organize imports for current filetype" })
+
+		-- Configure individual servers directly (new approach)
+		-- Default setup for most servers
+		local servers = {
+			"html",
+			"cssls",
+			"tailwindcss",
+			"emmet_ls",
+			"prismals",
+			"ruff",
+			"lua_ls",
+		}
+
+		for _, server in ipairs(servers) do
+			lspconfig[server].setup({
+				capabilities = capabilities,
+			})
+		end
+
+		-- Custom configurations for specific servers
+		lspconfig["pyright"].setup({
+			capabilities = capabilities,
+			settings = {
+				python = {
+					analysis = {
+						autoSearchPaths = true,
+						diagnosticMode = "workspace",
+						useLibraryCodeForTypes = true,
+						autoImportCompletions = true,
 					},
-					settings = {
-						python = {
-							analysis = {
-								autoSearchPaths = true,
-								diagnosticMode = "workspace",
-								useLibraryCodeForTypes = true,
-								autoImportCompletions = true,
-							},
-						},
-					},
-				})
-			end,
-			["svelte"] = function()
-				-- configure svelte server
-				lspconfig["svelte"].setup({
-					capabilities = capabilities,
-					on_attach = function(client, bufnr)
-						vim.api.nvim_create_autocmd("BufWritePost", {
-							pattern = { "*.js", "*.ts" },
-							callback = function(ctx)
-								-- Here use ctx.match instead of ctx.file
-								client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-							end,
-						})
+				},
+			},
+		})
+
+		lspconfig["svelte"].setup({
+			capabilities = capabilities,
+			on_attach = function(client, bufnr)
+				vim.api.nvim_create_autocmd("BufWritePost", {
+					pattern = { "*.js", "*.ts" },
+					callback = function(ctx)
+						-- Here use ctx.match instead of ctx.file
+						client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
 					end,
 				})
 			end,
-			["graphql"] = function()
-				-- configure graphql language server
-				lspconfig["graphql"].setup({
-					capabilities = capabilities,
-					filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-				})
-			end,
-			["ts_ls"] = function()
-				-- configure graphql language server
-				lspconfig["ts_ls"].setup({
-					capabilities = capabilities,
-					filetypes = { "typescriptreact", "typescript", "javascript", "javascriptreact" },
-					on_attach = function(client, bufnr)
-						vim.api.nvim_create_autocmd("BufWritePost", {
-							pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
-							callback = function(ctx)
-								-- Here use ctx.match instead of ctx.file
-								client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-							end,
-						})
+		})
+
+		lspconfig["graphql"].setup({
+			capabilities = capabilities,
+			filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+		})
+
+		lspconfig["ts_ls"].setup({
+			capabilities = capabilities,
+			filetypes = { "typescriptreact", "typescript", "javascript", "javascriptreact" },
+			on_attach = function(client, bufnr)
+				vim.api.nvim_create_autocmd("BufWritePost", {
+					pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
+					callback = function(ctx)
+						-- Here use ctx.match instead of ctx.file
+						client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
 					end,
-					commands = {
-						OrganizeImports = {
-							organize_imports,
-							description = "Organize Imports",
-						},
-					},
 				})
 			end,
 		})
