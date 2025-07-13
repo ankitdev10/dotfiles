@@ -133,30 +133,13 @@ return {
 				or filetype == "typescriptreact"
 				or filetype == "javascript"
 				or filetype == "javascriptreact"
+				or filetype == "svelte"
 			then
 				organize_imports()
 			else
 				vim.notify("OrganizeImports not supported for filetype: " .. filetype, vim.log.levels.WARN)
 			end
 		end, { desc = "Organize imports for current filetype" })
-
-		-- Configure individual servers directly (new approach)
-		-- Default setup for most servers
-		local servers = {
-			"html",
-			"cssls",
-			"tailwindcss",
-			"emmet_ls",
-			"prismals",
-			"ruff",
-			"lua_ls",
-		}
-
-		for _, server in ipairs(servers) do
-			lspconfig[server].setup({
-				capabilities = capabilities,
-			})
-		end
 
 		-- Custom configurations for specific servers
 		lspconfig["pyright"].setup({
