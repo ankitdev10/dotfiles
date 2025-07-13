@@ -39,7 +39,15 @@ return {
 				"pyright",
 				"ruff",
 			},
-			automatic_enable = true,
+			-- mason should not  enable it as we are setting it up in lsp-config.lua
+			automatic_enable = {
+				exclude = {
+					"pyright",
+					"svelte",
+					"graphql",
+					"ts_ls",
+				},
+			},
 		})
 
 		mason_tool_installer.setup({
