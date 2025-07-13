@@ -46,6 +46,7 @@ return {
 					"svelte",
 					"graphql",
 					"ts_ls",
+					"ruff", -- ruff is enabled in linting.lua
 				},
 			},
 		})
