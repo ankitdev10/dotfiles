@@ -286,6 +286,8 @@ if [[ $- == *i* && -z "${NO_FETCH-}" ]] && command -v fastfetch >/dev/null; then
             fastfetch
         elif (( cols >= 90 )); then
             fastfetch --logo "$HOME/.config/fastfetch/logo-small.txt"
+        elif (( cols >= 50 )); then
+            fastfetch --logo "$HOME/.config/fastfetch/logo-small.txt" --logo-position top
         else
             fastfetch --logo none
         fi
