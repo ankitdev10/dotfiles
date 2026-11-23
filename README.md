@@ -36,12 +36,13 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level fold
 | `nvim` | Neovim config (lazy.nvim, Catppuccin) |
 | `btop`, `cava`, `lazygit`, `gsimplecal` | Catppuccin themes for each |
 | `starship` | Prompt |
+| `fastfetch` | System info with the Pop!_OS logo in new terminals (not in tmux splits or the dropdown) |
 | `gtk` | GTK 3/4 theme, icon and cursor settings |
 | `x11` | `.Xresources` (cursor) |
 | `fonts` | Feather icon font used by polybar |
 | `bash` | `.bashrc` (starship, zoxide). Private aliases go in `~/.bashrc.local`, which is not tracked |
 
-Downloaded by `install.sh` instead of committed: Catppuccin GTK theme, Catppuccin cursors, Papirus-Dark icons with Catppuccin folders, starship, zoxide, tpm.
+Downloaded by `install.sh` instead of committed: Catppuccin GTK theme, Catppuccin cursors, Papirus-Dark icons with Catppuccin folders, starship, zoxide, fastfetch, tpm. dunst 1.13 is built from source.
 
 ## New machine
 

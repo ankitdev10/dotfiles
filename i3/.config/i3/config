@@ -54,7 +54,7 @@ bindsym $mod+Shift+n exec --no-startup-id dunstctl close-all
 
 # dropdown terminal
 for_window [class="^dropdown$"] floating enable, border pixel 3, resize set 1200 650, move position center, move scratchpad
-exec --no-startup-id kitty --class dropdown
+exec --no-startup-id kitty --class dropdown -o env=NO_FETCH=1
 bindsym $mod+Shift+Return exec --no-startup-id ~/.config/i3/scripts/dropdown-toggle.sh
 
 for_window [class="^Gsimplecal$"] floating enable, border pixel 3, move position mouse, move down 45 px
@@ -147,9 +147,9 @@ bindsym $mod+Return exec kitty
 bindsym $mod+q kill
 
 # start rofi (a program launcher)
-bindsym $mod+d exec --no-startup-id rofi -show drun
-bindsym $mod+space exec --no-startup-id rofi -show combi
-bindsym $mod+Tab exec --no-startup-id rofi -show window
+bindsym $mod+d exec --no-startup-id rofi -show drun -theme ~/.config/rofi/keyit-image.rasi
+bindsym $mod+space exec --no-startup-id rofi -show combi -theme ~/.config/rofi/keyit-image.rasi
+bindsym $mod+Tab exec --no-startup-id rofi -show window -theme ~/.config/rofi/keyit-image.rasi
 bindsym $mod+Shift+d exec --no-startup-id rofi -show drun -theme ~/.config/rofi/keyit-full.rasi
 
 # change focus

@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PACKAGES=(i3 polybar picom rofi dunst kitty tmux nvim btop cava lazygit gsimplecal starship gtk x11 fonts bash)
+PACKAGES=(i3 polybar picom rofi dunst kitty tmux nvim btop cava lazygit gsimplecal starship fastfetch gtk x11 fonts bash)
 
 sudo apt install -y \
     i3 polybar picom rofi dunst kitty tmux feh flameshot copyq xclip xdotool \
@@ -52,6 +52,12 @@ if ! "$HOME/.local/bin/dunst" --version 2>/dev/null | grep -q v1.13; then
     git clone -q --depth 1 -b v1.13.2 https://github.com/dunst-project/dunst.git "$tmp/dunst"
     make -C "$tmp/dunst" WAYLAND=0 SYSTEMD=0 PREFIX="$HOME/.local" install >/dev/null
     sed -i '/^SystemdService=/d' "$HOME/.local/share/dbus-1/services/org.knopwob.dunst.service"
+fi
+
+if ! command -v fastfetch >/dev/null; then
+    curl -sSL -o "$tmp/fastfetch.tar.gz" https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.tar.gz
+    tar -xzf "$tmp/fastfetch.tar.gz" -C "$tmp"
+    install -Dm755 "$tmp/fastfetch-linux-amd64/usr/bin/fastfetch" "$HOME/.local/bin/fastfetch"
 fi
 
 command -v starship >/dev/null || curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"

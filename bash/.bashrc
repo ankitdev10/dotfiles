@@ -273,4 +273,22 @@ esac
 
 [ -f "$HOME/.bashrc.local" ] && . "$HOME/.bashrc.local"
 
+[ -r "$HOME/.config/ls_colors/catppuccin-mocha" ] && export LS_COLORS="$(< "$HOME/.config/ls_colors/catppuccin-mocha")"
+bind 'set colored-stats on' 2>/dev/null
+bind 'set colored-completion-prefix on' 2>/dev/null
+
 eval "$(zoxide init bash)"
+
+if [[ $- == *i* && -z "${NO_FETCH-}" ]] && command -v fastfetch >/dev/null; then
+    if [[ -z "${TMUX-}" || "$(tmux display -p '#{window_panes}' 2>/dev/null)" == 1 ]]; then
+        cols=$(tput cols 2>/dev/null || echo 80)
+        if (( cols >= 100 )); then
+            fastfetch
+        elif (( cols >= 70 )); then
+            fastfetch --logo pop_small
+        else
+            fastfetch --logo none
+        fi
+        unset cols
+    fi
+fi

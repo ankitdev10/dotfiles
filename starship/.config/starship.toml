@@ -1,64 +1,52 @@
-format = """
-[░▒▓](#b4befe)\
-[☠️](bg:#b4befe fg:#11111b)\
-[](bg:#cba6f7 fg:#b4befe)\
-$directory\
-[](fg:#cba6f7 bg:#45475a)\
-$git_branch\
-$git_status\
-[](fg:#45475a bg:#313244)\
-$nodejs\
-$rust\
-$golang\
-$php\
-[](fg:#313244 bg:#181825)\
-$time\
-[ ](fg:#181825)\
-\n$character"""
+format = "$directory$git_branch$git_status$nodejs$python$rust$golang$php$cmd_duration$fill$time$line_break$character"
+add_newline = true
 
 [directory]
-style = "fg:#11111b bg:#cba6f7"
-format = "[ $path ]($style)"
+format = "[](fg:#181825)[ ](bg:#181825 fg:#fab387)[$path](bg:#181825 fg:#cdd6f4)[$read_only](bg:#181825 fg:#f38ba8)[](fg:#181825) "
 truncation_length = 3
 truncation_symbol = "…/"
-
-[directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = " "
-"Pictures" = " "
+read_only = " "
 
 [git_branch]
-symbol = ""
-style = "bg:#45475a"
-format = '[[ $symbol $branch ](fg:#cba6f7 bg:#45475a)]($style)'
+symbol = " "
+format = "[](fg:#181825)[$symbol](bg:#181825 fg:#a6e3a1)[$branch](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
 
 [git_status]
-style = "bg:#45475a"
-format = '[[($all_status$ahead_behind )](fg:#cba6f7 bg:#45475a)]($style)'
+format = "([](fg:#181825)[$all_status$ahead_behind](bg:#181825 fg:#f9e2af)[](fg:#181825) )"
 
 [nodejs]
-symbol = ""
-style = "bg:#313244"
-format = '[[ $symbol ($version) ](fg:#cba6f7 bg:#313244)]($style)'
+symbol = " "
+format = "[](fg:#181825)[$symbol](bg:#181825 fg:#a6e3a1)[$version](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
+
+[python]
+symbol = " "
+format = "[](fg:#181825)[$symbol](bg:#181825 fg:#f9e2af)[$version](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
 
 [rust]
-symbol = ""
-style = "bg:#313244"
-format = '[[ $symbol ($version) ](fg:#cba6f7 bg:#313244)]($style)'
+symbol = " "
+format = "[](fg:#181825)[$symbol](bg:#181825 fg:#fab387)[$version](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
 
 [golang]
-symbol = ""
-style = "bg:#313244"
-format = '[[ $symbol ($version) ](fg:#cba6f7 bg:#313244)]($style)'
+symbol = " "
+format = "[](fg:#181825)[$symbol](bg:#181825 fg:#89dceb)[$version](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
 
 [php]
-symbol = ""
-style = "bg:#313244"
-format = '[[ $symbol ($version) ](fg:#cba6f7 bg:#313244)]($style)'
+symbol = " "
+format = "[](fg:#181825)[$symbol](bg:#181825 fg:#b4befe)[$version](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
+
+[cmd_duration]
+min_time = 2000
+format = "[](fg:#181825)[ ](bg:#181825 fg:#f9e2af)[$duration](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
 
 [time]
 disabled = false
-time_format = "%R" # Hour:Minute Format
-style = "bg:#181825"
-format = '[[  $time ](fg:#bac2de bg:#181825)]($style)'
+time_format = "%H:%M"
+format = "[](fg:#181825)[ ](bg:#181825 fg:#f38ba8)[$time](bg:#181825 fg:#cdd6f4)[](fg:#181825)"
+
+[character]
+success_symbol = "[❯](bold #cba6f7)"
+error_symbol = "[❯](bold #f38ba8)"
+vimcmd_symbol = "[❮](bold #a6e3a1)"
+
+[fill]
+symbol = " "

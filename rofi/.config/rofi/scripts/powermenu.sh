@@ -12,7 +12,7 @@ confirm() {
 }
 
 choice=$(printf '%s\n' "$lock" "$suspend" "$logout" "$reboot" "$shutdown" \
-    | rofi -dmenu -i -p $' Power' -theme-str 'window {width: 320px;} listview {lines: 5;}')
+    | rofi -dmenu -i -p $' Power' -theme ~/.config/rofi/keyit-image.rasi -theme-str 'window {width: 540px;} listview {lines: 5;}')
 
 case "$choice" in
     "$lock") ~/.config/i3/scripts/lock.sh ;;
