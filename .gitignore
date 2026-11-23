@@ -1,0 +1,10 @@
+i3/.config/i3/back.jpg
+i3/.config/i3/luff.png
+i3/.config/i3/moon.png
+i3/.config/i3/shiva.png
+polybar/.config/polybar/backup/
+nvim/.config/nvim/lsp-config.bak
+btop/.config/btop/btop.log
+lazygit/.config/lazygit/state.yml
+__pycache__/
+*.pyc

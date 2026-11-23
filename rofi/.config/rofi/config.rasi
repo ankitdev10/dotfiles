@@ -1,0 +1,13 @@
+configuration {
+    modi: "drun,run,window,combi";
+    combi-modi: "drun,window,run";
+    show-icons: true;
+    icon-theme: "Papirus-Dark";
+    display-drun: "";
+    display-run: "";
+    display-window: "";
+    display-combi: "";
+    drun-display-format: "{name}";
+}
+
+@theme "~/.config/rofi/keyit.rasi"

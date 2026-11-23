@@ -1,0 +1,17 @@
+[general]
+framerate = 60
+bars = 16
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = noncurses
+
+[color]
+foreground = '#cdd6f4'
+
+[smoothing]
+noise_reduction = 77
