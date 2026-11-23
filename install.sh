@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PACKAGES=(i3 polybar picom rofi dunst kitty tmux nvim btop cava lazygit gsimplecal starship fastfetch gtk x11 fonts bash)
+PACKAGES=(i3 polybar picom rofi dunst kitty tmux nvim btop cava lazygit gsimplecal starship fastfetch gtk x11 fonts bash bin)
 
 sudo apt install -y \
     i3 polybar picom rofi dunst kitty tmux feh flameshot copyq xclip xdotool \

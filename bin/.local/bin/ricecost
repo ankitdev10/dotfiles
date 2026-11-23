@@ -1,0 +1,86 @@
+#!/usr/bin/env -S python3 -I
+import os, re, sys, time
+
+HZ = os.sysconf("SC_CLK_TCK")
+SAMPLE = int(sys.argv[1]) if len(sys.argv) > 1 else 60
+
+RULES = [
+    ("bar waves (cava)", lambda c, m: c == "cava" and "cava/polybar" in m),
+    ("music corner (hidden windows)", lambda c, m: "music-viz" in m or "music-panel" in m),
+    ("dropdown terminal (hidden)", lambda c, m: "--class dropdown" in m),
+    ("polybar (bars + scripts)", lambda c, m: c == "polybar"),
+    ("i3 (window manager)", lambda c, m: c == "i3"),
+    ("picom (blur, glow, dim)", lambda c, m: c == "picom"),
+    ("dunst (notifications)", lambda c, m: c == "dunst"),
+    ("copyq (clipboard)", lambda c, m: c == "copyq"),
+    ("nm-applet", lambda c, m: c == "nm-applet"),
+]
+
+
+def read_procs():
+    table = {}
+    for pid in filter(str.isdigit, os.listdir("/proc")):
+        try:
+            cmd = open(f"/proc/{pid}/cmdline", "rb").read().replace(b"\0", b" ").decode(errors="replace").strip()
+            stat = open(f"/proc/{pid}/stat").read()
+        except OSError:
+            continue
+        comm = stat[stat.index("(") + 1: stat.rindex(")")]
+        fields = stat[stat.rindex(")") + 2:].split()
+        ticks = sum(int(x) for x in fields[11:15])
+        table[int(pid)] = {"comm": comm, "cmd": cmd, "ppid": int(fields[1]), "ticks": ticks}
+    return table
+
+
+def group_pids(table):
+    owner = {}
+    for pid, p in table.items():
+        for name, test in RULES:
+            if test(p["comm"], p["cmd"]):
+                owner[pid] = name
+                break
+    changed = True
+    while changed:
+        changed = False
+        for pid, p in table.items():
+            if pid not in owner and p["ppid"] in owner:
+                owner[pid] = owner[p["ppid"]]
+                changed = True
+    groups = {}
+    for pid, name in owner.items():
+        groups.setdefault(name, set()).add(pid)
+    return groups
+
+
+def pss_mb(pid):
+    try:
+        for line in open(f"/proc/{pid}/smaps_rollup"):
+            if line.startswith("Pss:"):
+                return int(line.split()[1]) / 1024
+    except OSError:
+        pass
+    return 0.0
+
+
+print(f"Measuring for {SAMPLE}s… use the computer normally.", file=sys.stderr)
+before = read_procs()
+time.sleep(SAMPLE)
+after = read_procs()
+groups = group_pids(after)
+
+rows = []
+for name, pids in groups.items():
+    mem = sum(pss_mb(p) for p in pids)
+    used = sum(after[p]["ticks"] - before.get(p, {"ticks": 0})["ticks"] if p in before else after[p]["ticks"] for p in pids)
+    rows.append((name, mem, used / HZ / SAMPLE * 100, len(pids)))
+rows.sort(key=lambda r: -r[1])
+
+print(f"{'component':32} {'RAM (PSS)':>10} {'CPU avg':>8} {'procs':>6}")
+for name, mem, cpu, n in rows:
+    print(f"{name:32} {mem:7.1f} MB {cpu:7.2f}% {n:6d}")
+tm, tc = sum(r[1] for r in rows), sum(r[2] for r in rows)
+total = int(re.search(r"MemTotal:\s+(\d+)", open("/proc/meminfo").read()).group(1)) / 1024
+cores = os.cpu_count()
+print("-" * 60)
+print(f"{'TOTAL':32} {tm:7.1f} MB {tc:7.2f}%")
+print(f"= {tm / total * 100:.1f}% of {total / 1024:.1f} GB RAM, {tc / cores:.2f}% of all {cores} threads ({tc:.1f}% of one core)")

@@ -40,6 +40,7 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level fold
 | `gtk` | GTK 3/4 theme, icon and cursor settings |
 | `x11` | `.Xresources` (cursor) |
 | `fonts` | Feather icon font used by polybar |
+| `bin` | `ricecost`: measure the rice's RAM and CPU |
 | `bash` | `.bashrc` (starship, zoxide). Private aliases go in `~/.bashrc.local`, which is not tracked |
 
 Downloaded by `install.sh` instead of committed: Catppuccin GTK theme, Catppuccin cursors, Papirus-Dark icons with Catppuccin folders, starship, zoxide, fastfetch, tpm. dunst 1.13 is built from source.
@@ -223,6 +224,7 @@ Leader is `Space`.
 | `zoxide query <name>` | Show where `z <name>` goes |
 | `lazygit` | Git UI (`?` for help) |
 | `btop` | System monitor |
+| `ricecost [seconds]` | RAM (PSS) and average CPU of the rice, excluding apps |
 | `Alt+b` / `Alt+f` | Cursor one word back / forward |
 | `Ctrl+r` | Search command history |
 | `Ctrl+l` | Clear screen |
