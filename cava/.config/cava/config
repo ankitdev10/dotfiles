@@ -1,6 +1,6 @@
 [general]
 framerate = 60
-bars = 16
+bars = 32
 bar_spacing = 1
 
 [input]
@@ -11,7 +11,14 @@ source = auto
 method = noncurses
 
 [color]
-foreground = '#cdd6f4'
+background = '#1e1e2e'
+foreground = '#cba6f7'
+gradient = 1
+gradient_count = 4
+gradient_color_1 = '#8839ef'
+gradient_color_2 = '#cba6f7'
+gradient_color_3 = '#cba6f7'
+gradient_color_4 = '#f5c2e7'
 
 [smoothing]
-noise_reduction = 77
+noise_reduction = 60
