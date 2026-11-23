@@ -60,23 +60,28 @@ cd ~/dotfiles
 
 Then log out and back in to i3. Open tmux and press `C-a I` once to install tmux plugins.
 
-Requires FiraCode Nerd Font, and an i3 build with gaps (i3 4.22+ or a newer build).
+`install.sh` installs everything needed, including FiraCode Nerd Font and an i3 with gaps support.
 
 ## What install.sh does
 
-Run once on a fresh Pop!_OS / Ubuntu machine. It is safe to re-run: every step checks before doing work.
+Run once on a fresh Pop!_OS / Ubuntu 22.04+ machine (x86_64). Safe to re-run: every step checks first and skips work that is already done. Each step prints a `==>` header.
 
-1. **apt packages**: i3, polybar, picom (fallback), rofi, dunst (fallback), kitty, tmux, feh, flameshot, copyq, xclip, xdotool, playerctl, cava, gsimplecal, pavucontrol, libnotify-bin, imagemagick, btop, stow, xss-lock, i3lock, network-manager.
-2. **GTK theme**: Catppuccin Mocha Mauve into `~/.themes`, and links GTK 4 files into `~/.config/gtk-4.0`.
-3. **Cursor**: Catppuccin Mocha Dark into `~/.icons`, set as the default cursor.
-4. **Icons**: Papirus + Papirus-Dark into `~/.local/share/icons`, folder icons recolored to Catppuccin mauve.
-5. **dunst 1.13.2**: built from source if `~/.local/bin/dunst` is missing or older.
-6. **picom 12.5**: uses apt's picom if it is v12+, otherwise builds from source. Ends up at `~/.local/bin/picom` either way.
-7. **fastfetch, starship, zoxide**: latest releases into `~/.local/bin`.
-8. **tpm**: tmux plugin manager into `~/.tmux/plugins/tpm`.
-9. **stow** every package into `$HOME`, refresh the font cache, set the GTK/icon/cursor theme in gsettings.
+1. **apt packages**: build tools, i3, polybar, rofi, tmux, feh, flameshot, copyq, xclip, xdotool, playerctl, cava, gsimplecal, pavucontrol, libnotify-bin, imagemagick, btop, xss-lock, i3lock, nm-applet, dex, brightnessctl, stow (apt's picom and dunst stay as fallbacks).
+2. **i3 with gaps**: if the installed i3 rejects `gaps` (apt's 4.20 on 22.04), builds i3 4.24 into `/usr/local`.
+3. **kitty 0.30+**: official installer into `~/.local/opt/kitty.app` if apt's is older (22.04 ships 0.21).
+4. **neovim 0.10+**: official release into `~/.local/opt/nvim` if missing or older.
+5. **lazygit**, **FiraCode Nerd Font**: latest releases if missing.
+6. **GTK theme, cursor, icons**: Catppuccin Mocha Mauve GTK, Catppuccin Mocha Dark cursor, Papirus-Dark with Catppuccin folders.
+7. **dunst 1.13.2** and **picom 12** (see [Built from source](#built-from-source)).
+8. **fastfetch, starship, zoxide, tpm**.
+9. **stow**: existing files that would block a link (e.g. Ubuntu's default `~/.bashrc`) are moved to `~/.dotfiles-backup/<timestamp>/` first, then every package is linked.
+10. **gsettings**: GTK, icon and cursor theme (skipped quietly outside a desktop session).
 
-Manual afterwards: install FiraCode Nerd Font if missing (the script warns), log out and back in to i3, press `C-a I` in tmux once.
+Manual afterwards: log out, pick the **i3** session at login, open tmux and press `C-a I` once.
+
+Hardware-specific values are detected at runtime, not hardcoded: wifi interface, battery and AC adapter (`launch_polybar.sh` exports `WLAN`, `BATTERY`, `ADAPTER`), CPU temperature sensor (k10temp, coretemp, zenpower or thermal_zone0). Monitor names in the i3 config (`eDP`, `HDMI-1-0`) are this laptop's; other machines just ignore those xrandr lines.
+
+Assumes PipeWire (Pop!_OS default) for `wpctl`, used by the volume/mic scripts.
 
 ## Built from source
 
@@ -200,6 +205,7 @@ Guidelines for anyone changing this setup, including AI coding agents.
 | No blur / glow / animations | `pgrep -a picom` should show `~/.local/bin/picom`. Restart it. If it crashes, temporarily use `/usr/bin/picom` in the i3 config |
 | Old-looking notifications, no progress bars | The old dunst started. `killall dunst; ~/.local/bin/dunst &` and check the D-Bus override above |
 | Bar missing on a monitor | `xrandr --query`, then rerun `launch_polybar.sh` |
+| Wifi or battery pill empty | Check `ls /sys/class/net` and `ls /sys/class/power_supply`; `launch_polybar.sh` picks the first `wl*`, `BAT*` and `AC*`/`ADP*` |
 | `$mod+m` / dropdown does nothing | The scripts relaunch missing windows; check `~/.config/i3/scripts/*.sh` run by hand |
 | Icons show as boxes | The glyph is missing from FiraCode Nerd Font; pick another codepoint (`fc-list ':charset=<hex>'`) |
 | A config edit doesn't show in `git status` | The app replaced the symlink with a file; move it back into the package and `stow -R <app>` |
@@ -366,7 +372,7 @@ Leader is `Space`.
 | Dim unfocused windows (now 0.2) | `~/.config/picom/picom.conf` → `inactive-dim` | same as above |
 | Terminal opacity (now 0.75) | `~/.config/kitty/kitty.conf` → `background_opacity` | `Ctrl+Shift+F5` in kitty |
 | Corner rounding (now 10px) | `~/.config/picom/picom.conf` → `corner-radius` | `pkill -x picom; ~/.local/bin/picom -b` |
-| Border width (now 3px) | `~/.config/i3/config` → `border pixel` | `Super+Shift+r` |
+| Window borders (now off; focus = mauve glow + dimming) | `~/.config/i3/config` → `border pixel` | `Super+Shift+r` |
 | Border colors | `~/.config/i3/config` → `client.*` lines | `Super+Shift+r` |
 | Gaps (now 10) | `~/.config/i3/config` → `gaps inner / outer` | `Super+Shift+r` |
 | Wallpaper | `~/.config/i3/config` → `feh` line | `Super+Shift+r` |

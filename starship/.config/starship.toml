@@ -1,4 +1,4 @@
-format = "$directory$git_branch$git_status$nodejs$python$rust$golang$php$cmd_duration$fill$time$line_break$character"
+format = "[╭─](#6c7086)$directory$git_branch$git_status$nodejs$python$rust$golang$php$cmd_duration$line_break$character"
 add_newline = true
 
 [directory]
@@ -38,15 +38,8 @@ format = "[](fg:#181825)[$symbol](bg:#181825 fg:#b4befe)[$version](bg:#181825
 min_time = 2000
 format = "[](fg:#181825)[ ](bg:#181825 fg:#f9e2af)[$duration](bg:#181825 fg:#cdd6f4)[](fg:#181825) "
 
-[time]
-disabled = false
-time_format = "%H:%M"
-format = "[](fg:#181825)[ ](bg:#181825 fg:#f38ba8)[$time](bg:#181825 fg:#cdd6f4)[](fg:#181825)"
-
 [character]
-success_symbol = "[❯](bold #cba6f7)"
-error_symbol = "[❯](bold #f38ba8)"
-vimcmd_symbol = "[❮](bold #a6e3a1)"
+success_symbol = "[╰─](#6c7086)[❯](bold #cba6f7)"
+error_symbol = "[╰─](#6c7086)[❯](bold #f38ba8)"
+vimcmd_symbol = "[╰─](#6c7086)[❮](bold #a6e3a1)"
 
-[fill]
-symbol = " "

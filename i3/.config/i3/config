@@ -9,7 +9,7 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-for_window [class="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 0
 
 set $mod Mod4
 # set $mod Mod1
@@ -30,7 +30,7 @@ bindsym $mod+Control+h focus output right
 bindsym $mod+Control+l focus output left
 
 # wallpaper 
-exec --no-startup-id feh --bg-fill /home/ankitey/.config/i3/rainy-city.jpg
+exec --no-startup-id feh --bg-fill ~/.config/i3/rainy-city.jpg
 
 # Start CopyQ as a daemon without startup notifications
 exec --no-startup-id sh -c "sleep 2 && copyq &" 
@@ -53,17 +53,17 @@ bindsym $mod+n exec --no-startup-id dunstctl history-pop
 bindsym $mod+Shift+n exec --no-startup-id dunstctl close-all
 
 # dropdown terminal
-for_window [class="^dropdown$"] floating enable, border pixel 3, resize set 1200 650, move position center, move scratchpad
+for_window [class="^dropdown$"] floating enable, border pixel 0, resize set 1200 650, move position center, move scratchpad
 exec --no-startup-id kitty --class dropdown -o env=NO_FETCH=1
 bindsym $mod+Shift+Return exec --no-startup-id ~/.config/i3/scripts/dropdown-toggle.sh
 
-for_window [class="^Gsimplecal$"] floating enable, border pixel 3, move position mouse, move down 45 px
+for_window [class="^Gsimplecal$"] floating enable, border pixel 0, move position mouse, move down 45 px
 
-for_window [class="(?i)^pavucontrol$"] floating enable, border pixel 3, resize set 900 600, move position center
+for_window [class="(?i)^pavucontrol$"] floating enable, border pixel 0, resize set 900 600, move position center
 
 # music corner
-for_window [class="^music-viz$"] floating enable, border pixel 3, resize set 420 200, move position 1480 600, move scratchpad
-for_window [class="^music-panel$"] floating enable, border pixel 3, resize set 620 170, move position 1280 860, move scratchpad
+for_window [class="^music-viz$"] floating enable, border pixel 0, resize set 420 200, move position 1480 600, move scratchpad
+for_window [class="^music-panel$"] floating enable, border pixel 0, resize set 620 170, move position 1280 860, move scratchpad
 bindsym $mod+m exec --no-startup-id ~/.config/i3/scripts/music-toggle.sh
 
 

@@ -157,10 +157,10 @@ export NVM_DIR="$HOME/.nvm"
 export PATH=$PATH:$(go env GOPATH)/bin
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/ankitey/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/home/ankitey/Downloads/google-cloud-sdk/path.bash.inc'; fi
+if [ -f "$HOME/Downloads/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/Downloads/google-cloud-sdk/path.bash.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/home/ankitey/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/home/ankitey/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+if [ -f "$HOME/Downloads/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/Downloads/google-cloud-sdk/completion.bash.inc"; fi
 
 restro-staging() {
   aws ecs execute-command \
@@ -263,7 +263,7 @@ aux() {
 }
 
 # pnpm
-export PNPM_HOME="/home/ankitey/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME/bin:"*) ;;
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
