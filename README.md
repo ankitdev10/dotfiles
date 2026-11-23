@@ -108,7 +108,7 @@ Everything starts from `~/.config/i3/config` at login:
 | `exec ~/.local/bin/dunst` | Notifications |
 | `exec_always ~/.config/polybar/launch_polybar.sh` | One bar per connected monitor (`MONITOR=<name> polybar toph`) |
 | `exec feh --bg-fill …/rainy-city.jpg` | Wallpaper |
-| `exec kitty --class dropdown` | Dropdown terminal, kept in the scratchpad |
+| `exec kitty --class dropdown --listen-on …` | Dropdown terminal with remote control on a private socket, kept in the scratchpad |
 | `exec xss-lock … ~/.config/i3/scripts/lock.sh` | Lock before sleep |
 | `exec copyq`, `nm-applet`, `dex --autostart` | Clipboard, network, XDG autostart |
 
@@ -118,7 +118,7 @@ Key scripts:
 |---|---|
 | `i3/.config/i3/scripts/osd.sh` | Volume / mic keys with dunst progress-bar pop-ups (max 150%) |
 | `i3/.config/i3/scripts/lock.sh` | Blurred screenshot lock screen (plain i3lock) |
-| `i3/.config/i3/scripts/dropdown-toggle.sh` | `Super+Shift+Enter`, starts the dropdown if missing |
+| `i3/.config/i3/scripts/dropdown-toggle.sh` | `Super+Shift+Enter`: starts the dropdown if missing; when showing it, `cd`s to the focused terminal's folder (tmux pane aware) via kitty remote control on `$XDG_RUNTIME_DIR/kitty-dropdown`, only if the dropdown sits at an idle prompt |
 | `i3/.config/i3/scripts/music-toggle.sh`, `nowplaying.sh` | `Super+m` music corner (cava + now playing) |
 | `polybar/.config/polybar/scripts/music.sh` | Music pill, follows playerctl events |
 | `polybar/.config/polybar/scripts/mic.sh` | Mic pill, follows `pactl subscribe` events |
@@ -216,7 +216,7 @@ Guidelines for anyone changing this setup, including AI coding agents.
 | Key | Action |
 |---|---|
 | `Super+Enter` | Terminal (kitty) |
-| `Super+Shift+Enter` | Dropdown terminal (show / hide) |
+| `Super+Shift+Enter` | Dropdown terminal (show / hide). Jumps to the folder of the terminal you were in, if the dropdown is idle |
 | `Super+q` | Close window |
 | `Super+h/j/k/l` or arrows | Focus window left / down / up / right |
 | `Super+Shift+h/j/k/l` or arrows | Move window |

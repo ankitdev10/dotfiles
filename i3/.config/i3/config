@@ -54,7 +54,7 @@ bindsym $mod+Shift+n exec --no-startup-id dunstctl close-all
 
 # dropdown terminal
 for_window [class="^dropdown$"] floating enable, border pixel 0, resize set 1200 650, move position center, move scratchpad
-exec --no-startup-id kitty --class dropdown -o env=NO_FETCH=1
+exec --no-startup-id kitty --class dropdown --listen-on "unix:$XDG_RUNTIME_DIR/kitty-dropdown" -o allow_remote_control=socket-only -o confirm_os_window_close=0 -o env=NO_FETCH=1
 bindsym $mod+Shift+Return exec --no-startup-id ~/.config/i3/scripts/dropdown-toggle.sh
 
 for_window [class="^Gsimplecal$"] floating enable, border pixel 0, move position mouse, move down 45 px
