@@ -4,7 +4,7 @@ i3 rice on Pop!_OS 22.04: Catppuccin Mocha everywhere, Keyitdev-style pill bar, 
 
 Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level folder is a package that mirrors `$HOME`.
 
-`Super` is the Windows key. `Super+F1` opens a searchable cheatsheet with every shortcut below and more.
+`Super` is the Windows key. `Super+F1` opens a searchable cheatsheet with every shortcut below and more. The day-to-day essentials are in [KEYMAPS.md](KEYMAPS.md).
 
 ## Contents
 
@@ -38,7 +38,7 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level fold
 | `dunst` | Notifications |
 | `kitty` | Terminal + Catppuccin theme |
 | `tmux` | Pill status bar, `C-a` prefix, vim-tmux-navigator |
-| `nvim` | Neovim config (lazy.nvim, Catppuccin). Start screen shows the fastfetch desk art |
+| `nvim` | Neovim config (lazy.nvim, Catppuccin). Start screen shows the fastfetch desk art; Catppuccin pill status line and tabs |
 | `btop`, `cava`, `lazygit`, `gsimplecal` | Catppuccin themes for each |
 | `starship` | Prompt |
 | `fastfetch` | System info with custom desk-setup art (`logo.txt`, `logo-small.txt`) in new terminals, not in tmux splits or the dropdown |

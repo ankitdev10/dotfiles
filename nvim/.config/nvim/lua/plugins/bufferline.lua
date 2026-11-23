@@ -15,18 +15,29 @@ return {
 		{ "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
 		{ "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
 	},
-	opts = {
-		options = {
-			separator_style = "slant",
-			diagnostics = "nvim_lsp",
-			offsets = {
-				{
-					filetype = "neo-tree",
-					text = "Neo-tree",
-					highlight = "Directory",
-					text_align = "left",
+	opts = function()
+		return {
+			highlights = require("catppuccin.special.bufferline").get_theme({
+				custom = {
+					all = {
+						indicator_selected = { fg = "#cba6f7" },
+						buffer_selected = { fg = "#cdd6f4", bold = true, italic = false },
+					},
+				},
+			}),
+			options = {
+				separator_style = "thin",
+				indicator = { style = "icon", icon = "\u{258e}" },
+				diagnostics = "nvim_lsp",
+				offsets = {
+					{
+						filetype = "neo-tree",
+						text = "Neo-tree",
+						highlight = "Directory",
+						text_align = "left",
+					},
 				},
 			},
-		},
-	},
+		}
+	end,
 }
