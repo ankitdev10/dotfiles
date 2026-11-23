@@ -72,7 +72,7 @@ In any menu: type to filter, `Enter` to pick, `Esc` to close.
 
 ## tmux
 
-Prefix is `Ctrl+a` (`C-a`): press it, release, then the key.
+Prefix is `Ctrl+a` (`C-a`): press it, release, then the key. The session pill (top-left) turns mauve while tmux waits for that key.
 
 | Keys | What it does |
 |---|---|
