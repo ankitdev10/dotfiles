@@ -284,7 +284,7 @@ if [[ $- == *i* && -z "${NO_FETCH-}" ]] && command -v fastfetch >/dev/null; then
         cols=$(tput cols 2>/dev/null || echo 80)
         if (( cols >= 116 )); then
             fastfetch
-        elif (( cols >= 82 )); then
+        elif (( cols >= 90 )); then
             fastfetch --logo "$HOME/.config/fastfetch/logo-small.txt"
         else
             fastfetch --logo none
