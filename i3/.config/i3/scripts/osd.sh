@@ -3,14 +3,7 @@ sink=@DEFAULT_AUDIO_SINK@
 source=@DEFAULT_AUDIO_SOURCE@
 
 show() {
-    local glyph=$1 pct=$2 title=$3 label=$4 width=20
-    local filled=$(( (pct > 100 ? 100 : pct) * width / 100 ))
-    local on off
-    printf -v on '%*s' "$filled" ''
-    printf -v off '%*s' $(( width - filled )) ''
-    local bar="<span foreground='#cba6f7'>${on// /━}</span><span foreground='#45475a'>${off// /━}</span>"
-    dunstify -a osd -u low -t 1500 -h string:x-dunst-stack-tag:osd \
-        "$title" "<span foreground='#cba6f7'>$glyph</span>  $bar  $label"
+    dunstify -a osd -u low -t 1500 -i "$1" -h string:x-dunst-stack-tag:osd -h "int:value:$2" "$3" "$4"
 }
 
 level() { wpctl get-volume "$1" | awk '{printf "%d", $2*100}'; }
@@ -25,19 +18,19 @@ esac
 
 if [[ "$1" == "mic" ]]; then
     if muted "$source"; then
-        show $'\uf131' 0 "Microphone" "Muted"
+        show microphone-sensitivity-muted 0 "Microphone" "Muted"
     else
         v=$(level "$source")
-        show $'\uf130' "$v" "Microphone" "$v%"
+        show microphone-sensitivity-high "$v" "Microphone" "$v%"
     fi
 else
     v=$(level "$sink")
     if muted "$sink"; then
-        show $'\U000f075f' 0 "Volume" "Muted"
+        show audio-volume-muted 0 "Volume" "Muted"
     else
-        glyph=$'\U000f057e'
-        (( v < 66 )) && glyph=$'\U000f0580'
-        (( v < 33 )) && glyph=$'\U000f057f'
-        show "$glyph" "$v" "Volume" "$v%"
+        icon=audio-volume-high
+        (( v < 66 )) && icon=audio-volume-medium
+        (( v < 33 )) && icon=audio-volume-low
+        show "$icon" "$(( v > 100 ? 100 : v ))" "Volume" "$v%"
     fi
 fi

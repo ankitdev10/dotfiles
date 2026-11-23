@@ -46,6 +46,14 @@ if [[ ! -d "$HOME/.local/share/icons/Papirus-Dark" ]]; then
     mkdir -p "$HOME/.local/share/icons" && cp -a "$src/Papirus" "$src/Papirus-Dark" "$HOME/.local/share/icons/"
 fi
 
+if ! "$HOME/.local/bin/dunst" --version 2>/dev/null | grep -q v1.13; then
+    sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev \
+        libglib2.0-dev libpango1.0-dev libgdk-pixbuf-2.0-dev libnotify-dev libcairo2-dev
+    git clone -q --depth 1 -b v1.13.2 https://github.com/dunst-project/dunst.git "$tmp/dunst"
+    make -C "$tmp/dunst" WAYLAND=0 SYSTEMD=0 PREFIX="$HOME/.local" install >/dev/null
+    sed -i '/^SystemdService=/d' "$HOME/.local/share/dbus-1/services/org.knopwob.dunst.service"
+fi
+
 command -v starship >/dev/null || curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
 command -v zoxide >/dev/null || curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 
