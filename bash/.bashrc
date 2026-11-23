@@ -282,10 +282,10 @@ eval "$(zoxide init bash)"
 if [[ $- == *i* && -z "${NO_FETCH-}" ]] && command -v fastfetch >/dev/null; then
     if [[ -z "${TMUX-}" || "$(tmux display -p '#{window_panes}' 2>/dev/null)" == 1 ]]; then
         cols=$(tput cols 2>/dev/null || echo 80)
-        if (( cols >= 100 )); then
+        if (( cols >= 116 )); then
             fastfetch
-        elif (( cols >= 70 )); then
-            fastfetch --logo pop_small
+        elif (( cols >= 82 )); then
+            fastfetch --logo "$HOME/.config/fastfetch/logo-small.txt"
         else
             fastfetch --logo none
         fi
