@@ -54,6 +54,22 @@ if ! "$HOME/.local/bin/dunst" --version 2>/dev/null | grep -q v1.13; then
     sed -i '/^SystemdService=/d' "$HOME/.local/share/dbus-1/services/org.knopwob.dunst.service"
 fi
 
+if ! "$HOME/.local/bin/picom" --version 2>/dev/null | grep -q '^v1[2-9]'; then
+    apt_picom=$(apt-cache policy picom | awk '/Candidate:/ {print $2}' | sed 's/^[0-9]*://' | cut -d. -f1)
+    if [[ "$apt_picom" =~ ^[0-9]+$ ]] && (( apt_picom >= 12 )); then
+        sudo apt install -y picom
+        mkdir -p "$HOME/.local/bin" && ln -sfn "$(command -v picom)" "$HOME/.local/bin/picom"
+    else
+        sudo apt install -y meson ninja-build cmake pkg-config libconfig-dev libdbus-1-dev libegl-dev libev-dev \
+            libgl-dev libepoxy-dev libpcre2-dev libpixman-1-dev libx11-xcb-dev libxcb1-dev libxcb-composite0-dev \
+            libxcb-damage0-dev libxcb-glx0-dev libxcb-image0-dev libxcb-present-dev libxcb-randr0-dev \
+            libxcb-render0-dev libxcb-render-util0-dev libxcb-shape0-dev libxcb-util-dev libxcb-xfixes0-dev uthash-dev
+        git clone -q --depth 1 -b v12.5 https://github.com/yshui/picom.git "$tmp/picom"
+        meson setup "$tmp/picom/build" "$tmp/picom" --prefix="$HOME/.local" --buildtype=release >/dev/null
+        ninja -C "$tmp/picom/build" install >/dev/null
+    fi
+fi
+
 if ! command -v fastfetch >/dev/null; then
     curl -sSL -o "$tmp/fastfetch.tar.gz" https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.tar.gz
     tar -xzf "$tmp/fastfetch.tar.gz" -C "$tmp"

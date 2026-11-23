@@ -238,7 +238,7 @@ def shell_section():
 
 def tips_section():
     return [
-        ("tips", "Restart picom", "pkill -x picom; picom --experimental-backends -b"),
+        ("tips", "Restart picom", "pkill -x picom; ~/.local/bin/picom -b"),
         ("tips", "Blur strength", "~/.config/picom/picom.conf → strength (now 4), then restart picom"),
         ("tips", "Dim unfocused", "~/.config/picom/picom.conf → inactive-dim (now 0.2), then restart picom"),
         ("tips", "Terminal opacity", "~/.config/kitty/kitty.conf → background_opacity, then Ctrl+Shift+F5"),

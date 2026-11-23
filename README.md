@@ -10,7 +10,12 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level fold
 
 - [Packages](#packages)
 - [New machine](#new-machine)
+- [What install.sh does](#what-installsh-does)
+- [Built from source](#built-from-source)
+- [How it fits together](#how-it-fits-together)
 - [Updating the repo](#updating-the-repo)
+- [Maintaining this repo](#maintaining-this-repo)
+- [Troubleshooting](#troubleshooting)
 - [i3: windows and workspaces](#i3-windows-and-workspaces)
 - [Menus and tools](#menus-and-tools)
 - [Bar clicks](#bar-clicks)
@@ -27,23 +32,23 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level fold
 | Package | What it holds |
 |---|---|
 | `i3` | i3 config, wallpapers, scripts (music corner, dropdown terminal, lock screen, volume/mic pop-ups) |
-| `polybar` | Pill bar, Catppuccin colors, scripts (music, mic, CPU temp, notifications) |
-| `picom` | Blur (dual_kawase, strength 4), shadows, fading, dim unfocused windows |
+| `polybar` | Pill bar, Catppuccin colors, scripts: music + mic (event-driven), CPU temp, waves visualizer |
+| `picom` | picom v12 config: blur (dual_kawase, strength 4), mauve glow on the focused window, dim unfocused, open/close animations, 10px rounded corners |
 | `rofi` | Launcher + fullscreen grid themes, menus: power, wifi, emoji, calculator, clipboard, cheatsheet |
 | `dunst` | Notifications |
 | `kitty` | Terminal + Catppuccin theme |
 | `tmux` | Pill status bar, `C-a` prefix, vim-tmux-navigator |
-| `nvim` | Neovim config (lazy.nvim, Catppuccin) |
+| `nvim` | Neovim config (lazy.nvim, Catppuccin). Start screen shows the fastfetch desk art |
 | `btop`, `cava`, `lazygit`, `gsimplecal` | Catppuccin themes for each |
 | `starship` | Prompt |
-| `fastfetch` | System info with the Pop!_OS logo in new terminals (not in tmux splits or the dropdown) |
+| `fastfetch` | System info with custom desk-setup art (`logo.txt`, `logo-small.txt`) in new terminals, not in tmux splits or the dropdown |
 | `gtk` | GTK 3/4 theme, icon and cursor settings |
 | `x11` | `.Xresources` (cursor) |
 | `fonts` | Feather icon font used by polybar |
 | `bin` | `ricecost`: measure the rice's RAM and CPU |
 | `bash` | `.bashrc` (starship, zoxide). Private aliases go in `~/.bashrc.local`, which is not tracked |
 
-Downloaded by `install.sh` instead of committed: Catppuccin GTK theme, Catppuccin cursors, Papirus-Dark icons with Catppuccin folders, starship, zoxide, fastfetch, tpm. dunst 1.13 is built from source.
+Downloaded by `install.sh` instead of committed: Catppuccin GTK theme, Catppuccin cursors, Papirus-Dark icons with Catppuccin folders, starship, zoxide, fastfetch, tpm. Built from source into `~/.local`: dunst 1.13.2 and picom 12.5 (see [Built from source](#built-from-source)).
 
 ## New machine
 
@@ -56,6 +61,68 @@ cd ~/dotfiles
 Then log out and back in to i3. Open tmux and press `C-a I` once to install tmux plugins.
 
 Requires FiraCode Nerd Font, and an i3 build with gaps (i3 4.22+ or a newer build).
+
+## What install.sh does
+
+Run once on a fresh Pop!_OS / Ubuntu machine. It is safe to re-run: every step checks before doing work.
+
+1. **apt packages**: i3, polybar, picom (fallback), rofi, dunst (fallback), kitty, tmux, feh, flameshot, copyq, xclip, xdotool, playerctl, cava, gsimplecal, pavucontrol, libnotify-bin, imagemagick, btop, stow, xss-lock, i3lock, network-manager.
+2. **GTK theme**: Catppuccin Mocha Mauve into `~/.themes`, and links GTK 4 files into `~/.config/gtk-4.0`.
+3. **Cursor**: Catppuccin Mocha Dark into `~/.icons`, set as the default cursor.
+4. **Icons**: Papirus + Papirus-Dark into `~/.local/share/icons`, folder icons recolored to Catppuccin mauve.
+5. **dunst 1.13.2**: built from source if `~/.local/bin/dunst` is missing or older.
+6. **picom 12.5**: uses apt's picom if it is v12+, otherwise builds from source. Ends up at `~/.local/bin/picom` either way.
+7. **fastfetch, starship, zoxide**: latest releases into `~/.local/bin`.
+8. **tpm**: tmux plugin manager into `~/.tmux/plugins/tpm`.
+9. **stow** every package into `$HOME`, refresh the font cache, set the GTK/icon/cursor theme in gsettings.
+
+Manual afterwards: install FiraCode Nerd Font if missing (the script warns), log out and back in to i3, press `C-a I` in tmux once.
+
+## Built from source
+
+Pop!_OS 22.04 ships old versions, so two programs are built into `~/.local` (no system files touched; the apt versions stay as fallbacks).
+
+| Program | Why | Version | Build |
+|---|---|---|---|
+| dunst | 1.5 in apt has no progress bars or icon themes | 1.13.2 | `make WAYLAND=0 SYSTEMD=0 PREFIX=$HOME/.local install` |
+| picom | v9 in apt has no animations | 12.5 | `meson setup build --prefix=$HOME/.local --buildtype=release && ninja -C build install` |
+
+Notes:
+
+- picom 12 needs libconfig ≥ 1.7 (22.04 has 1.5). With `cmake` installed, meson fetches and builds libconfig automatically.
+- dunst's D-Bus service is overridden so the new binary is always used: `~/.local/share/dbus-1/services/org.knopwob.dunst.service` (no `SystemdService=` line) and `~/.config/systemd/user/dunst.service` (tracked in the `dunst` package).
+- i3 starts `~/.local/bin/picom` and `~/.local/bin/dunst` explicitly.
+
+## How it fits together
+
+Everything starts from `~/.config/i3/config` at login:
+
+| Started by i3 | What |
+|---|---|
+| `exec_always ~/.local/bin/picom` | Compositor |
+| `exec ~/.local/bin/dunst` | Notifications |
+| `exec_always ~/.config/polybar/launch_polybar.sh` | One bar per connected monitor (`MONITOR=<name> polybar toph`) |
+| `exec feh --bg-fill …/rainy-city.jpg` | Wallpaper |
+| `exec kitty --class dropdown` | Dropdown terminal, kept in the scratchpad |
+| `exec xss-lock … ~/.config/i3/scripts/lock.sh` | Lock before sleep |
+| `exec copyq`, `nm-applet`, `dex --autostart` | Clipboard, network, XDG autostart |
+
+Key scripts:
+
+| Path | Purpose |
+|---|---|
+| `i3/.config/i3/scripts/osd.sh` | Volume / mic keys with dunst progress-bar pop-ups (max 150%) |
+| `i3/.config/i3/scripts/lock.sh` | Blurred screenshot lock screen (plain i3lock) |
+| `i3/.config/i3/scripts/dropdown-toggle.sh` | `Super+Shift+Enter`, starts the dropdown if missing |
+| `i3/.config/i3/scripts/music-toggle.sh`, `nowplaying.sh` | `Super+m` music corner (cava + now playing) |
+| `polybar/.config/polybar/scripts/music.sh` | Music pill, follows playerctl events |
+| `polybar/.config/polybar/scripts/mic.sh` | Mic pill, follows `pactl subscribe` events |
+| `polybar/.config/polybar/scripts/wave.sh` | Mini visualizer (cava config `cava/.config/cava/polybar`, 15 fps) |
+| `rofi/.config/rofi/scripts/*.sh` | Power, wifi, emoji, calculator, clipboard menus |
+| `rofi/.config/rofi/scripts/cheatsheet.py` | `Super+F1`, reads i3 / tmux / nvim keymaps live |
+| `bin/.local/bin/ricecost` | Measures the rice's RAM (PSS) and CPU |
+
+The terminal greeting is the fastfetch hook at the end of `bash/.bashrc`: full art at 116+ columns, compact art beside the info at 90–115, compact art above the info at 50–89, info only below 50. The nvim start screen (`nvim/.config/nvim/lua/plugins/alpha.lua`) reads the same `logo.txt` / `logo-small.txt`, so editing the art changes both.
 
 ## Updating the repo
 
@@ -76,6 +143,67 @@ git push
 | Stop managing an app | `cd ~/dotfiles && stow -D <app>` (removes the links) |
 | Re-link after a pull | `cd ~/dotfiles && stow -R <app>` |
 | Check a file is still linked | `ls -l ~/.config/<app>/<file>` (look for `->`) |
+
+## Maintaining this repo
+
+Guidelines for anyone changing this setup, including AI coding agents.
+
+**Look**
+
+- Palette is Catppuccin Mocha everywhere. Accent is mauve.
+
+  | Name | Hex | Used for |
+  |---|---|---|
+  | base | `#1e1e2e` | Terminal / window background |
+  | mantle | `#181825` | Pills (polybar, tmux, prompt), rofi |
+  | crust | `#11111b` | Rofi input bar |
+  | surface0 / surface1 | `#313244` / `#45475a` | Selection, borders |
+  | overlay0 | `#6c7086` | Unfocused borders, dim text |
+  | text | `#cdd6f4` | Text |
+  | mauve | `#cba6f7` | Accent, focused border, glow |
+  | peach | `#fab387` | Folder / clock icons, warnings |
+  | green | `#a6e3a1` | OK states, branch icon |
+  | red | `#f38ba8` | Errors, muted |
+  | blue / teal / yellow | `#89b4fa` / `#94e2d5` / `#f9e2af` | Secondary icons |
+
+- Font is FiraCode Nerd Font everywhere; polybar icons use the Feather font.
+- Shapes: rounded pills (Nerd Font caps U+E0B6 and U+E0B4) on a mantle background, used by polybar, tmux and the starship prompt.
+- Prefer lightweight changes. Avoid anything that keeps a process busy in the background; check with `ricecost` before and after.
+
+**Editing**
+
+- Edit through the normal paths (`~/.config/...`); they are symlinks into this repo. New apps get their own package folder and `stow <app>`.
+- Nerd Font / Feather icons are Private Use Area characters. Some editors and tools silently strip them. When generating config text, write them as escapes (`\uXXXX` in JSON/TOML/Python, `$'\uXXXX'` in bash) and verify the result.
+- Keep secrets out of the repo. Private shell lines go in `~/.bashrc.local` (untracked, sourced by `.bashrc`).
+- Neovim is the owner's daily driver: change only what is asked.
+- Commits are authored by the repo owner. Don't add AI co-author trailers.
+
+**Validate before reloading**
+
+| Component | Check | Apply |
+|---|---|---|
+| i3 | `i3 -C -c ~/.config/i3/config` | `Super+Shift+r` or `i3-msg reload` |
+| polybar | `MONITOR=eDP polybar --dump=height toph` | `killall polybar; ~/.config/polybar/launch_polybar.sh` |
+| picom | `~/.local/bin/picom --diagnostics` | `pkill -x picom; ~/.local/bin/picom -b` |
+| rofi | `rofi -dump-theme` | next time a menu opens |
+| dunst | start `~/.local/bin/dunst` in a terminal and read warnings | `killall dunst` (restarts on next notification) |
+| kitty | `kitty +runpy 'from kitty.config import load_config; load_config("'$HOME'/.config/kitty/kitty.conf")'` | `Ctrl+Shift+F5` |
+| tmux | `tmux source-file ~/.tmux.conf` | same |
+| bash | `bash -n ~/.bashrc` | new terminal |
+| fastfetch | `fastfetch --pipe` | new terminal |
+| cost | `ricecost 60` | — |
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| No blur / glow / animations | `pgrep -a picom` should show `~/.local/bin/picom`. Restart it. If it crashes, temporarily use `/usr/bin/picom` in the i3 config |
+| Old-looking notifications, no progress bars | The old dunst started. `killall dunst; ~/.local/bin/dunst &` and check the D-Bus override above |
+| Bar missing on a monitor | `xrandr --query`, then rerun `launch_polybar.sh` |
+| `$mod+m` / dropdown does nothing | The scripts relaunch missing windows; check `~/.config/i3/scripts/*.sh` run by hand |
+| Icons show as boxes | The glyph is missing from FiraCode Nerd Font; pick another codepoint (`fc-list ':charset=<hex>'`) |
+| A config edit doesn't show in `git status` | The app replaced the symlink with a file; move it back into the package and `stow -R <app>` |
+| fastfetch art missing | Terminal too narrow (`tput cols`); see thresholds above |
 
 ## i3: windows and workspaces
 
@@ -234,9 +362,10 @@ Leader is `Space`.
 
 | Change | Where | Apply with |
 |---|---|---|
-| Blur strength (now 4) | `~/.config/picom/picom.conf` → `strength` | `pkill -x picom; picom --experimental-backends -b` |
+| Blur strength (now 4) | `~/.config/picom/picom.conf` → `strength` | `pkill -x picom; ~/.local/bin/picom -b` |
 | Dim unfocused windows (now 0.2) | `~/.config/picom/picom.conf` → `inactive-dim` | same as above |
 | Terminal opacity (now 0.75) | `~/.config/kitty/kitty.conf` → `background_opacity` | `Ctrl+Shift+F5` in kitty |
+| Corner rounding (now 10px) | `~/.config/picom/picom.conf` → `corner-radius` | `pkill -x picom; ~/.local/bin/picom -b` |
 | Border width (now 3px) | `~/.config/i3/config` → `border pixel` | `Super+Shift+r` |
 | Border colors | `~/.config/i3/config` → `client.*` lines | `Super+Shift+r` |
 | Gaps (now 10) | `~/.config/i3/config` → `gaps inner / outer` | `Super+Shift+r` |
