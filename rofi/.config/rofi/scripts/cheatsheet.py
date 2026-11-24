@@ -233,6 +233,9 @@ def shell_section():
         ("shell", "lazygit", "Git UI in the current repo (? for help)"),
         ("shell", "btop", "System monitor"),
         ("shell", "Alt+b / Alt+f", "Cursor one word back / forward"),
+        ("text", ";email ;phone ;linkedin ;github", "espanso: expand anywhere"),
+        ("text", ";date ;time", "espanso: today / now"),
+        ("text", "Alt+Space", "espanso: search snippets"),
     ]
 
 

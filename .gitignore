@@ -8,3 +8,4 @@ btop/.config/btop/btop.log
 lazygit/.config/lazygit/state.yml
 __pycache__/
 *.pyc
+espanso/.config/espanso/match/private.yml

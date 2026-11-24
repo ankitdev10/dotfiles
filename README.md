@@ -41,6 +41,7 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level fold
 | `nvim` | Neovim config (lazy.nvim, Catppuccin). Start screen shows the fastfetch desk art; Catppuccin pill status line and tabs |
 | `btop`, `cava`, `lazygit`, `gsimplecal` | Catppuccin themes for each |
 | `starship` | Prompt |
+| `espanso` | Text expander: `;date`, `;time` in `match/base.yml`. Personal snippets (email, phone, links) go in `match/private.yml`, which is git-ignored |
 | `fastfetch` | System info with custom desk-setup art (`logo.txt`, `logo-small.txt`) in new terminals, not in tmux splits or the dropdown |
 | `gtk` | GTK 3/4 theme, icon and cursor settings |
 | `x11` | `.Xresources` (cursor) |
@@ -73,7 +74,7 @@ Run once on a fresh Pop!_OS / Ubuntu 22.04+ machine (x86_64). Safe to re-run: ev
 5. **lazygit**, **FiraCode Nerd Font**: latest releases if missing.
 6. **GTK theme, cursor, icons**: Catppuccin Mocha Mauve GTK, Catppuccin Mocha Dark cursor, Papirus-Dark with Catppuccin folders.
 7. **dunst 1.13.2** and **picom 12** (see [Built from source](#built-from-source)).
-8. **fastfetch, starship, zoxide, tpm**.
+8. **fastfetch, starship, zoxide, tpm, espanso** (AppImage, since the 22.04 `.deb` needs a newer wxWidgets). A placeholder `private.yml` is created for personal snippets.
 9. **stow**: existing files that would block a link (e.g. Ubuntu's default `~/.bashrc`) are moved to `~/.dotfiles-backup/<timestamp>/` first, then every package is linked.
 10. **gsettings**: GTK, icon and cursor theme (skipped quietly outside a desktop session).
 

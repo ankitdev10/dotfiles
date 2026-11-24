@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PACKAGES=(i3 polybar picom rofi dunst kitty tmux nvim btop cava lazygit gsimplecal starship fastfetch gtk x11 fonts bash bin)
+PACKAGES=(i3 polybar picom rofi dunst kitty tmux nvim btop cava lazygit gsimplecal starship fastfetch espanso gtk x11 fonts bash bin)
 
 step() { printf '\n\033[1;35m==> %s\033[0m\n' "$*"; }
 ver_ge() { [[ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" == "$2" ]]; }
@@ -130,6 +130,15 @@ if ! "$HOME/.local/bin/picom" --version 2>/dev/null | grep -q '^v1[2-9]'; then
     fi
 fi
 
+step "espanso (text expander)"
+if ! command -v espanso >/dev/null; then
+    mkdir -p "$HOME/.local/opt/espanso"
+    curl -sSL --http1.1 --retry 5 -o "$HOME/.local/opt/espanso/Espanso.AppImage" \
+        https://github.com/espanso/espanso/releases/latest/download/Espanso-X11.AppImage
+    chmod +x "$HOME/.local/opt/espanso/Espanso.AppImage"
+    ln -sfn "$HOME/.local/opt/espanso/Espanso.AppImage" "$HOME/.local/bin/espanso"
+fi
+
 step "fastfetch, starship, zoxide, tpm"
 if ! command -v fastfetch >/dev/null; then
     curl -sSL -o "$tmp/fastfetch.tar.gz" https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.tar.gz
@@ -166,6 +175,10 @@ stow -R -t "$HOME" "${PACKAGES[@]}"
 
 step "finishing"
 fc-cache -f >/dev/null
+if [[ ! -f "$HOME/.config/espanso/match/private.yml" ]]; then
+    printf 'matches:\n  - trigger: ";email"\n    replace: "you@example.com"\n' > "$HOME/.config/espanso/match/private.yml"
+fi
+espanso service register >/dev/null 2>&1 || true
 gsettings set org.gnome.desktop.interface gtk-theme "$theme" 2>/dev/null || true
 gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark 2>/dev/null || true
 gsettings set org.gnome.desktop.interface cursor-theme "$cursor" 2>/dev/null || true

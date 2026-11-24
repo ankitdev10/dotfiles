@@ -70,6 +70,18 @@ In any menu: type to filter, `Enter` to pick, `Esc` to close.
 | Volume pill: click / scroll / right-click | Mute / ±5% / sound settings (output device, per-app volume) |
 | Mic pill: click / scroll | Mute / level ±5% |
 
+## Text snippets (espanso)
+
+Type a trigger anywhere (browser, Slack, terminal, nvim) and it expands. `Backspace` right after undoes it.
+
+| Type | Becomes |
+|---|---|
+| `;email` / `;phone` | Email / phone (personal, kept in the untracked `private.yml`) |
+| `;linkedin` / `;github` | Profile links |
+| `;date` / `;time` | Today's date / current time |
+| `Alt+Space` | Search all snippets |
+| `espanso edit` / `espanso restart` | Edit snippets / restart the service |
+
 ## tmux
 
 Prefix is `Ctrl+a` (`C-a`): press it, release, then the key. The session pill (top-left) turns mauve while tmux waits for that key.
